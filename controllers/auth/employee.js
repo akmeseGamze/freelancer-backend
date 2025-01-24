@@ -1,6 +1,16 @@
 const jwt = require('jsonwebtoken');
 const Employee = require('../../models/Employee');
 
+const autoLogin = async (req, res, next) => {
+  const employee = await req.employee;
+
+  const token = jwt.sign({ employeeId: employee._id }, process.env.SECRET_KEY, {
+    expiresIn: '1 hour'
+  });
+
+  return res.json({ employee: employee, token: token });
+};
+
 // Login with an existing employee
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -25,4 +35,4 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { login };
+module.exports = { login, autoLogin };
